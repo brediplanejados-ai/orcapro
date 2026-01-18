@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0c495f",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#1a212e",
+                        "success-accent": "#3d7a6c",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Configuração de Custos Fixos</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0e171b] dark:text-gray-100 min-h-screen pb-24">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
+<div class="text-[#0e171b] dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</div>
+<h2 class="text-[#0e171b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Configuração de Custos</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-lg h-12 bg-transparent text-primary dark:text-white font-bold">
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+</div>
+<main class="max-w-md mx-auto px-4">
+<!-- Summary Header Card -->
+<div class="mt-6 p-4 rounded-xl bg-primary text-white shadow-lg overflow-hidden relative">
+<div class="relative z-10">
+<p class="text-sm opacity-80 font-medium">Custo Operacional Mensal</p>
+<h1 class="text-3xl font-extrabold mt-1">R$ 12.450,00</h1>
+</div>
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10">
+<span class="material-symbols-outlined text-8xl">calculate</span>
+</div>
+</div>
+<!-- Section 1: Custos Fixos -->
+<div class="mt-8">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-[#0e171b] dark:text-white text-[20px] font-bold leading-tight tracking-[-0.015em]">Custos Fixos</h2>
+<button class="text-primary dark:text-blue-400 text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add</span> Adicionar
+                </button>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+<!-- List Item 1 -->
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-3 justify-between border-b border-gray-50 dark:border-gray-700">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-11">
+<span class="material-symbols-outlined">home</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-[#0e171b] dark:text-white text-base font-semibold leading-normal">Aluguel do Galpão</p>
+<p class="text-[#4f8396] text-sm font-medium">R$ 2.500,00</p>
+</div>
+</div>
+<div class="shrink-0">
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center gap-4 px-4 min-h-[72px] py-3 justify-between border-b border-gray-50 dark:border-gray-700">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-11">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-[#0e171b] dark:text-white text-base font-semibold leading-normal">Energia Elétrica</p>
+<p class="text-[#4f8396] text-sm font-medium">R$ 450,00</p>
+</div>
+</div>
+<div class="shrink-0">
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- Operational Metrics Sub-card -->
+<div class="bg-gray-50 dark:bg-gray-800/50 p-4 border-t border-gray-100 dark:border-gray-700">
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dias Úteis / Mês</label>
+<input class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-primary focus:border-transparent outline-none" type="number" value="22"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Custo Diário</label>
+<div class="flex items-center h-[38px] px-3 bg-primary/5 dark:bg-primary/20 rounded-lg text-primary dark:text-blue-300 font-extrabold text-sm">
+                                R$ 134,09
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Colaboradores -->
+<div class="mt-8">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-[#0e171b] dark:text-white text-[20px] font-bold leading-tight tracking-[-0.015em]">Colaboradores</h2>
+<button class="text-primary dark:text-blue-400 text-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">person_add</span> Adicionar
+                </button>
+</div>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50 dark:bg-gray-900/50">
+<th class="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Cargo</th>
+<th class="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Salário</th>
+<th class="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase text-right">H/Mês</th>
+<th class="p-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase text-right">Valor/H</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50 dark:divide-gray-700">
+<tr>
+<td class="p-4 text-sm font-semibold text-[#0e171b] dark:text-white">Marceneiro</td>
+<td class="p-4 text-sm text-[#4f8396] font-medium">R$ 3.800</td>
+<td class="p-4 text-sm text-[#4f8396] text-right">220</td>
+<td class="p-4 text-sm font-bold text-primary dark:text-blue-300 text-right">R$ 17,27</td>
+</tr>
+<tr>
+<td class="p-4 text-sm font-semibold text-[#0e171b] dark:text-white">Ajudante</td>
+<td class="p-4 text-sm text-[#4f8396] font-medium">R$ 1.800</td>
+<td class="p-4 text-sm text-[#4f8396] text-right">220</td>
+<td class="p-4 text-sm font-bold text-primary dark:text-blue-300 text-right">R$ 8,18</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-success-accent/5 dark:bg-success-accent/10 flex justify-between items-center border-t border-gray-100 dark:border-gray-700">
+<span class="text-sm font-bold text-success-accent uppercase tracking-wide">Total Folha</span>
+<span class="text-lg font-extrabold text-success-accent">R$ 5.600,00</span>
+</div>
+</div>
+</div>
+<!-- Instructional Card -->
+<div class="mt-8 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col @container">
+<div class="flex flex-col items-stretch justify-start rounded-lg @xl:flex-row @xl:items-start">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg mb-4" data-alt="Woodworking workshop with tools neatly organized" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdxO-wZ6xGM-295ebwLvjYSYuiKRNyx9TxEFa0oVuQdGOd8SfSJz0CjNgSMK_z7wpoT9wziW3Jys_pcu0eClV18LNG_5SiimM-WAjNJ9DM56sel_EtCmZSpXlLs2UPE2Mvk7FPHo2JZWIfFQMywU82yg5d5Vub-51g7TWjdXRcL7y6viDHrJDyP59OECVk8xv7SaoYUc4WtGKnYQUEcLggGfTcLEyXK-RGLPtfLgoxdT5dNewqU8sflIjZKn7gV-X7X-4nqk4yjE_Y");'></div>
+<div class="flex w-full grow flex-col items-stretch justify-center gap-1">
+<p class="text-[#0e171b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Dica de Gestão</p>
+<p class="text-[#4f8396] dark:text-gray-400 text-sm font-normal leading-normal">Não esqueça de incluir custos pequenos como lixas, colas e manutenção de serras no valor dos insumos por projeto.</p>
+</div>
+</div>
+</div>
+<!-- Final Result Card -->
+<div class="mt-8 p-6 bg-success-accent text-white rounded-2xl shadow-xl flex flex-col items-center justify-center text-center">
+<p class="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-1">Custo Estrutural Total</p>
+<div class="text-4xl font-extrabold mb-4">R$ 18.050,00</div>
+<p class="text-sm opacity-90 leading-relaxed px-4">
+                Sua marcenaria precisa faturar este valor para atingir o ponto de equilíbrio mensal.
+            </p>
+<button class="mt-6 w-full py-4 bg-white text-success-accent font-extrabold rounded-xl shadow-md active:scale-[0.98] transition-all">
+                GERAR RELATÓRIO PDF
+            </button>
+</div>
+</main>
+<!-- Bottom Tab Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 px-6 py-3 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Painel</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">payments</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Custos</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Orçamentos</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Ajustes</span>
+</button>
+</nav>
+</body></html>
