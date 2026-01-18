@@ -1,36 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Material, DirectLabor } from '../types';
 import ThemeToggle from '../components/ThemeToggle';
+import { supabase } from '../lib/supabase';
 
 const ProjectBudget: React.FC = () => {
-    const [materials, setMaterials] = useState<Material[]>([
-        {
-            id: '1',
-            name: 'Painéis MDF 18mm',
-            description: 'Branco Diamante - 2.75x1.85m',
-            quantity: 4,
-            unitValue: 380,
-            imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAiJwCaHTLHybTq6ih-osk7d6gMLscU69F3kI-zZh7alsCqP_VpWraSDRaOb9a9FGSGp3V0OKZWJEeRfXCDBB8fJ89pgWrWbT0g1ySpX4eottyc_OiI3ThLmbibDkLVjP9tYp6zgvV4WCdIS0JycdJgP_8-C6tpA8q-0RmtgbAaS1ZJbTHSLhjumapnQeqjbcdLTB4UDYGcZn6jdhKUh7Lw3N4Ataxc2rgi8HcKAGknGOnH8NtxRptXh-qaK1J5k-sdAGaGmXSR6y37"
-        },
-        {
-            id: '2',
-            name: 'Ferragens e Acessórios',
-            description: 'Dobradiças, Corrediças telescópicas',
-            quantity: 24,
-            unitValue: 12.5,
-            imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuAZMHjsK66QNdRTmGLpx1dV89DdC2G2MWIIeJlfHIGrxKAvVusriBWGkKBvdaIy1e9we3_40u36ZJ9U94QIM5HulucI9zthBeZH89kQVEy_xdBSuH_z63OEUPpGVdPbb5_l3GB8s4UBK8v6mjT7jqzDrs91yV_-LMM_TcMhv5Gs-iTr7fhNLnufGaZfjSZkd8uURr2BVSLq2ErtSTee187jtiyNi24e7QdrBjH9IN5d1p4mPIslAFdL1zYF3P7g8pmeJvnU-Rp9ZvR3"
-        },
-    ]);
-
-    const [labor, setLabor] = useState<DirectLabor[]>([
-        { id: '1', role: 'Marceneiro Master', hourlyRate: 45, hoursPlanned: 32 },
-        { id: '2', role: 'Auxiliar de Produção', hourlyRate: 20, hoursPlanned: 18 },
-    ]);
+    const [materials, setMaterials] = useState<Material[]>([]);
+    const [labor, setLabor] = useState<DirectLabor[]>([]);
 
     const [productionDays, setProductionDays] = useState(5);
     const [installationDays, setInstallationDays] = useState(2);
     const [taxesPerc, setTaxesPerc] = useState(8);
     const [profitPerc, setProfitPerc] = useState(35);
+    const [budgetId, setBudgetId] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        // Here we could load the last saved budget if needed
+    }, []);
+
+    const saveBudget = async () => {
+        setLoading(true);
+        const budgetData = {
+            project_name: 'Novo Orçamento',
+            production_days: productionDays,
+            installation_days: installationDays,
+            taxes_perc: taxesPerc,
+            profit_perc: profitPerc,
+            materials,
+            labor
+        };
+
+        try {
+            if (budgetId) {
+                await supabase.from('budgets').update(budgetData).eq('id', budgetId);
+            } else {
+                const { data } = await supabase.from('budgets').insert(budgetData).select().single();
+                if (data) setBudgetId(data.id);
+            }
+            alert('Orçamento salvo com sucesso!');
+        } catch (error) {
+            console.error('Error saving budget:', error);
+            alert('Erro ao salvar orçamento.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const addMaterial = () => {
         const name = window.prompt('Nome do material:');
@@ -113,8 +127,12 @@ const ProjectBudget: React.FC = () => {
                         <div className="hidden md:block">
                             <ThemeToggle />
                         </div>
-                        <button className="bg-primary text-white px-6 py-2.5 rounded-xl font-black text-sm tracking-wide hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all">
-                            SALVAR
+                        <button
+                            onClick={saveBudget}
+                            disabled={loading}
+                            className="bg-primary text-white px-6 py-2.5 rounded-xl font-black text-sm tracking-wide hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all disabled:opacity-50"
+                        >
+                            {loading ? 'SALVANDO...' : 'SALVAR'}
                         </button>
                     </div>
                 </div>

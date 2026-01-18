@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FixedCost, Collaborator } from '../types';
+import { supabase } from '../lib/supabase';
 
 const FixedCosts: React.FC = () => {
-    const [fixedCosts, setFixedCosts] = useState<FixedCost[]>([
-        { id: '1', name: 'Aluguel do Galpão', value: 2500, icon: 'home' },
-        { id: '2', name: 'Energia Elétrica', value: 450, icon: 'bolt' },
-    ]);
-
-    const [collaborators, setCollaborators] = useState<Collaborator[]>([
-        { id: '1', role: 'Marceneiro', salary: 3800, hoursPerMonth: 220 },
-        { id: '2', role: 'Ajudante', salary: 1800, hoursPerMonth: 220 },
-    ]);
-
+    const [fixedCosts, setFixedCosts] = useState<FixedCost[]>([]);
+    const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
     const [workingDays, setWorkingDays] = useState(22);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchData();
+
+        // Optional: Real-time subscription
+        const fixedCostsSub = supabase.channel('fixed_costs_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'fixed_costs' }, () => fetchData())
+            .subscribe();
+
+        const collaboratorsSub = supabase.channel('collaborators_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'collaborators' }, () => fetchData())
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(fixedCostsSub);
+            supabase.removeChannel(collaboratorsSub);
+        };
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const { data: costs } = await supabase.from('fixed_costs').select('*').order('created_at', { ascending: true });
+            const { data: colabs } = await supabase.from('collaborators').select('*').order('created_at', { ascending: true });
+
+            if (costs) setFixedCosts(costs);
+            if (colabs) setCollaborators(colabs);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const totalFixedCosts = fixedCosts.reduce((acc, curr) => acc + (curr.value || 0), 0);
     const totalPayroll = collaborators.reduce((acc, curr) => acc + (curr.salary || 0), 0);
@@ -23,11 +49,12 @@ const FixedCosts: React.FC = () => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     };
 
-    const removeFixedCost = (id: string) => {
+    const removeFixedCost = async (id: string) => {
         setFixedCosts(prev => prev.filter(item => item.id !== id));
+        await supabase.from('fixed_costs').delete().eq('id', id);
     };
 
-    const addFixedCost = () => {
+    const addFixedCost = async () => {
         const name = window.prompt('Nome do custo (ex: Aluguel):');
         if (!name) return;
         const valueStr = window.prompt('Valor mensal (R$):', '0');
@@ -39,15 +66,19 @@ const FixedCosts: React.FC = () => {
             return;
         }
 
-        setFixedCosts(prev => [...prev, {
-            id: crypto.randomUUID(),
+        const newCost = {
             name,
             value,
             icon: 'payments'
-        }]);
+        };
+
+        const { data } = await supabase.from('fixed_costs').insert(newCost).select().single();
+        if (data) {
+            setFixedCosts(prev => [...prev, data]);
+        }
     };
 
-    const addCollaborator = () => {
+    const addCollaborator = async () => {
         const role = window.prompt('Cargo (ex: Marceneiro):');
         if (!role) return;
         const salaryStr = window.prompt('Salário mensal (R$):', '0');
@@ -59,32 +90,38 @@ const FixedCosts: React.FC = () => {
             return;
         }
 
-        setCollaborators(prev => [...prev, {
-            id: crypto.randomUUID(),
+        const newColab = {
             role,
             salary,
-            hoursPerMonth: 220
-        }]);
+            hours_per_month: 220
+        };
+
+        const { data } = await supabase.from('collaborators').insert(newColab).select().single();
+        if (data) {
+            // Mapping from DB hours_per_month to UI hoursPerMonth
+            const mapped = { ...data, hoursPerMonth: data.hours_per_month };
+            setCollaborators(prev => [...prev, mapped]);
+        }
     };
 
-    const updateCollaborator = (id: string, field: keyof Collaborator, value: string | number) => {
-        setCollaborators(prev => prev.map(c => {
-            if (c.id === id) {
-                let finalValue = value;
-                if (field === 'salary' && typeof value === 'string') {
-                    finalValue = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
-                }
-                if (field === 'hoursPerMonth') {
-                    finalValue = Number(value) || 0;
-                }
-                return { ...c, [field]: finalValue };
-            }
-            return c;
-        }));
+    const updateCollaborator = async (id: string, field: keyof Collaborator, value: string | number) => {
+        let finalValue = value;
+        if (field === 'salary' && typeof value === 'string') {
+            finalValue = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.')) || 0;
+        }
+        if (field === 'hoursPerMonth') {
+            finalValue = Number(value) || 0;
+        }
+
+        setCollaborators(prev => prev.map(c => c.id === id ? { ...c, [field]: finalValue } : c));
+
+        const dbField = field === 'hoursPerMonth' ? 'hours_per_month' : field;
+        await supabase.from('collaborators').update({ [dbField]: finalValue }).eq('id', id);
     };
 
-    const removeCollaborator = (id: string) => {
+    const removeCollaborator = async (id: string) => {
         setCollaborators(prev => prev.filter(item => item.id !== id));
+        await supabase.from('collaborators').delete().eq('id', id);
     };
 
     return (
